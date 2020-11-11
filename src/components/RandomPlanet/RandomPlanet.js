@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PlanetService from '../../services/planet-service';
+import ErrorIndicator from '../ErrorIndicator/ErrorIndicator';
 import Loader from '../Loader/Loader';
 import './RandomPlanet.css';
 
@@ -9,6 +10,14 @@ export default class RandomPlanet extends Component {
     state = {
         planet: {},
         loading: true,
+        error: false,
+    };
+
+    onError = (err) => {
+        this.setState({
+            error: true,
+            loading: false,
+        });
     };
 
     onPlanetLoaded = (planet) => {
@@ -20,10 +29,11 @@ export default class RandomPlanet extends Component {
 
     updatePlanet() {
         // const id = Math.floor(Math.random() * 5) + 2;
-        const id = 5;
+        const id = 1400;
         this.planetService
             .getPlanet(id)
-            .then(this.onPlanetLoaded);
+            .then(this.onPlanetLoaded)
+            .catch(this.onError)
     }
 
     constructor() {
@@ -32,15 +42,19 @@ export default class RandomPlanet extends Component {
     }
 
     render () {
-        const {planet, loading } = this.state;
+        const {planet, loading, error } = this.state;
+        const hasData = !(error || loading);
         const spinner = loading ? <Loader /> : null;
+        const content = hasData ? <PlanetView planet={planet}/> : null;
+        const viewError = error ? <ErrorIndicator /> : null;
 
         return (
             <div className="random-planet">
                 <div className="card mb-3">
                     <div className="row no-gutters">
                         {spinner}
-                        <PlanetView planet={planet}/>
+                        {viewError}
+                        {content}
                     </div>
                 </div>
             </div>
