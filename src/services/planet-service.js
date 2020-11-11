@@ -39,7 +39,7 @@ export default class PlanetService {
     async getPlanet(id) {
         const endpoint = `/planets/${id}/`;
         const planet = await this.swapiService.getResource(endpoint);
-        
+
         return this._transformPlanetData(planet);
     }
 }
